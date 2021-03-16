@@ -1,3 +1,9 @@
+```go
+type Timer struct {
+    C <-chan Time
+}
+```
+---
 
 ```go
 package main

@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
-const basepath = "data"
+const basepath = "/home/aa/project/cheatsheet/data"
 
 func realpath(rel string) string {
 	return filepath.Join(basepath, rel)
@@ -21,8 +21,6 @@ func relpath(real string) string {
 	exitIfErr(err)
 	return rel
 }
-
-const helpFileReletivePath = "help.md"
 
 func getRelativePath(args []string, completeIndex bool) string {
 	switch len(args) {
@@ -44,13 +42,10 @@ func getRelativePath(args []string, completeIndex bool) string {
 
 func getContent(args []string) []byte {
 	fpath := getRelativePath(args, true)
-	if fpath == "" {
-		fpath = helpFileReletivePath
-	}
 	buf, err := ioutil.ReadFile(realpath(fpath))
 	if os.IsNotExist(err) {
 		fmt.Println("err:", err)
-		buf, err = ioutil.ReadFile(realpath(helpFileReletivePath))
+		buf, err = ioutil.ReadFile(realpath(filepath.Join("ctt", "index.md")))
 	}
 	exitIfErr(err)
 	return buf
@@ -64,6 +59,9 @@ func exitIfErr(e error) {
 }
 
 func renderCheatsheet(args []string) {
+	if len(args) == 0 {
+		args = append(args, "ctt")
+	}
 	renderContent(getContent(args))
 }
 
@@ -84,7 +82,7 @@ func listCheatsheet(args []string) {
 	dirsDepth := make(map[string]int, 0)
 	filepath.Walk(realpath(fpath), func(path string, info os.FileInfo, err error) error {
 		exitIfErr(err)
-		if path == basepath || path == realpath(helpFileReletivePath) {
+		if path == basepath {
 			return nil
 		}
 		if info.IsDir() {
